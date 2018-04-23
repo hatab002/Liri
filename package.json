@@ -13,6 +13,7 @@
     "dotenv": "^5.0.1",
     "file-system": "^2.2.2",
     "inquirer": "^5.2.0",
+    "inquirer-confirm": "^0.2.2",
     "node-spotify-api": "^1.0.7",
     "omdb": "^0.8.0",
     "request": "^2.85.0",
