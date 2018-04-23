@@ -18,7 +18,7 @@ const twitterParam = {
     count: 20
 };
 let spotifyCall = function () {
-    if (userSearch === undefined) {
+    if (!userSearch) {
         userSearch = "track:The+Sign+artist:Ace+of+Base";
     }
     spotify.search({
@@ -67,7 +67,12 @@ let movieTime = function (userSearch) {
             console.log("The movie's plot: " + parsedBody.Plot);
             console.log("The movie's language: " + parsedBody.Language);
             console.log("The movie's imdb rating: " + parsedBody.imdbRating);
-            console.log("The movie's rotten tomatoes rating: " + parsedBody.Ratings[1].Value);
+            if (parsedBody.Ratings) {
+                console.log("The movie's Rotten Tomatoes Rating: " + parsedBody.Ratings[1].Value);
+                console.log("-----------------------------------")
+            } else {
+                console.log("The movie's rotten tomatoes rating: Sorry there is no Rotten Tomatoes Rating for this one!")
+            };
         } else {
             console.log("Error: Movie not found!");
         }
@@ -122,7 +127,12 @@ function inq() {
                     name: "movie",
                     message: "Which movie would you like me to lookup?"
                 }, ]).then(function (responseOmdb) {
-                    movieTime(responseOmdb.movie);
+                    if (!userSearch) {
+                        movieTime("Mr. Nobody");
+                    }
+                    userSearch = responseOmdb.movie;
+                    movieTime(userSearch);
+
                 });
                 break;
             case 'Spotify this song for me!':
@@ -131,6 +141,9 @@ function inq() {
                     name: "song",
                     message: "Enter a song name"
                 }, ]).then(function (responseSpotify) {
+                    if (!userSearch) {
+                        userSearch = "track:The+Sign+artist:Ace+of+Base";
+                    }
                     userSearch = responseSpotify.song
                     spotifyCall(userSearch);
                 });
