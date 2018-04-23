@@ -6,6 +6,9 @@ var request = require('request');
 var keys = require('./keys.js');
 var omdb = require('omdb');
 var fs = require('fs');
+var date = require('date-and-time');
+let now = new Date();
+let newDate = date.format(now, 'YYYY/MM/DD HH:mm:ss');
 var spotify = new Spotify(keys.spotify);
 var client = new Twitter(keys.twitter);
 let command = process.argv[2];
@@ -37,6 +40,10 @@ let spotifyCall = function () {
             } else {
                 console.log("Preview URL: Sorry, there is no preview URL.")
             }
+            fs.appendFile('log.txt', `\nSpotify was called on ${newDate}`, function (err) {
+                if (err) throw err;
+                console.log('Your command has been logged, check log.txt to see all your commands!');
+              });
         }
     });
 };
@@ -49,7 +56,12 @@ let twitter = function () {
                 console.log(`Tweeted on: ${tweets[i].created_at}`);
                 console.log(`Tweet: ${tweets[i].text}`);
                 console.log("-------------------")
+
             }
+                    fs.appendFile('log.txt', `\nTwitter was called on ${newDate}`, function (err) {
+                        if (err) throw err;
+                        console.log('Your command has been logged, check log.txt to see all your commands!');
+                      });
         } else {
             console.log(error)
         }
@@ -57,6 +69,10 @@ let twitter = function () {
 }
 
 let movieTime = function (userSearch) {
+    fs.appendFile('log.txt', `\nOMDB was called on ${newDate}`, function (err) {
+        if (err) throw err;
+        console.log('Your command has been logged, check log.txt to see all your commands!');
+      });
     var queryURL = `http://www.omdbapi.com/?t=${userSearch}&y=&plot=short&apikey=trilogy`;
     request(queryURL, function (error, response, body) {
         if (!error && response.statusCode === 200) {
@@ -80,6 +96,10 @@ let movieTime = function (userSearch) {
 }
 
 let justDoItAlready = function () {
+    fs.appendFile('log.txt', `\n"Surprise function" was called on ${newDate}`, function (err) {
+        if (err) throw err;
+        console.log('Your command has been logged, check log.txt to see all your commands!');
+      });
     fs.readFile("random.txt", "utf8", function (err, data) {
         queryText = data.split(",")
         userSearch = queryText[1]
@@ -127,12 +147,13 @@ function inq() {
                     name: "movie",
                     message: "Which movie would you like me to lookup?"
                 }, ]).then(function (responseOmdb) {
+                    
+                     userSearch = responseOmdb.movie
                     if (!userSearch) {
                         movieTime("Mr. Nobody");
+                        return;
                     }
-                    userSearch = responseOmdb.movie;
                     movieTime(userSearch);
-
                 });
                 break;
             case 'Spotify this song for me!':
